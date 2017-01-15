@@ -1,14 +1,12 @@
-• Explicar que tipo de información se guarda en los directorios
- • Wiki+Colabora para la OB
- • Wiki: información de operación, lecciones aprendidas
- • Información operación OB sólo info privada de la OB
-  ○ Contiene entre otros el OP
-  ○ Ficha de sus clientes
-   
- • La documentación compartida con todos en formato pdf
-  ○ DoB y CoB: pdf's finales
-  ○ Directorios para cada LOB con info compartida
-  ○ Modelo Operativo
- • Una URL para las OB's y otro para los nuestros
- • Control de versiones
-Sin idioma (Español o inglés)
+# Lisho
+
+Best and easy way to shopping products without forgetting them!
+
+## Functionalities:
+
+* Share your shopping lists with your friends.
+* Add/Edit/Delete your shopping lists.
+* Add/Edit/Delete any products into your shopping lists.
+* Different ways to add new products: by voice or keyboard.
+* Add quantity and price if you want to know the final price. Avoid disgusting situation like "Unfortunately I can't buy all the needed products because I don't have enough money..."
+* Cross out the product if you already bought it.
