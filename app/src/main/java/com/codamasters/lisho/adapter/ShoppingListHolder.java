@@ -1,7 +1,10 @@
 package com.codamasters.lisho.adapter;
 
 
+import android.app.ActivityOptions;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,6 +13,7 @@ import android.widget.TextView;
 
 import com.codamasters.lisho.R;
 import com.codamasters.lisho.model.ShoppingList;
+import com.codamasters.lisho.ui.ShoppingDetailListActivity;
 import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
 import com.nightonke.boommenu.BoomButtons.TextInsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
@@ -68,6 +72,9 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
 
     @Override
     public void onClick(View view) {
+        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(this.context, R.transition.animation_in_1,R.transition.animation_in_2).toBundle();
+        Intent intent = new Intent(this.context, ShoppingDetailListActivity.class);
+        this.context.startActivity(intent, bndlanimation);
     }
 
     @Override

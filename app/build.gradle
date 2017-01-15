@@ -39,4 +39,9 @@ dependencies {
     // RecyclerView
     compile 'com.android.support:recyclerview-v7:+'
 
+    // TodoList
+
+    compile 'com.github.yalantis:todolist:v1.0.1'
+
+
 }
