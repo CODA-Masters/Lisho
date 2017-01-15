@@ -35,4 +35,8 @@ dependencies {
     compile('com.mikepenz:materialdrawer:5.8.1@aar') {
         transitive = true
     }
+
+    // RecyclerView
+    compile 'com.android.support:recyclerview-v7:+'
+
 }

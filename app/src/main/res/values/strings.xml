@@ -32,4 +32,13 @@
     <string name="text_ham_button_sub_text_highlighted">Ham Button Sub Text(Highlighted)</string>
     <string name="text_ham_button_sub_text_unable">Ham Button Sub Text(Unable)</string>
 
+
+    <!-- APP CONTENT -->
+
+    <string name="text_ham_add_shopping_own_title">Add Own List</string>
+    <string name="text_ham_add_shopping_own_subtitle">Create an own shopping list</string>
+
+    <string name="text_ham_add_shopping_group_title">Add Group List</string>
+    <string name="text_ham_add_shopping_group_subtitle">Create an group shopping list</string>
+
 </resources>
