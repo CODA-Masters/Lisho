@@ -42,7 +42,7 @@ public class BuilderManager {
         return imageResources[imageResourceIndex++];
     }
 
-    static SimpleCircleButton.Builder getSimpleCircleButtonBuilder() {
+    public static SimpleCircleButton.Builder getSimpleCircleButtonBuilder() {
         return new SimpleCircleButton.Builder()
                 .normalImageRes(getImageResource());
     }

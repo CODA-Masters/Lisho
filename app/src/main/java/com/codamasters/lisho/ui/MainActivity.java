@@ -134,7 +134,6 @@ public class MainActivity extends AppCompatActivity {
         bmb.setPiecePlaceEnum(PiecePlaceEnum.HAM_3);
         bmb.setButtonPlaceEnum(ButtonPlaceEnum.HAM_3);
 
-
         HamButton.Builder builder = new HamButton.Builder()
                 .normalImageRes(R.drawable.butterfly)
                 .normalTextRes(R.string.text_ham_add_shopping_own_title)
