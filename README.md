@@ -1,6 +1,6 @@
 # Lisho
 
-Best and easy way to shopping products without forgetting them!
+Best and easy way to buy products without forgetting them!
 
 ## Functionalities:
 
