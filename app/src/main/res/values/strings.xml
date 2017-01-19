@@ -41,4 +41,13 @@
     <string name="text_ham_add_shopping_group_title">Add Group List</string>
     <string name="text_ham_add_shopping_group_subtitle">Create an group shopping list</string>
 
+    <string name="wait">Loading...</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_phone">Phone Number</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_repeat_password">Repeat Password</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_dni">DNI</string>
+    <string name="hint_date">Date</string>
+
 </resources>

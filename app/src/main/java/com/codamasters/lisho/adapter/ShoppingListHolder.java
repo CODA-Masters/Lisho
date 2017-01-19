@@ -1,10 +1,10 @@
 package com.codamasters.lisho.adapter;
 
 
-import android.app.ActivityOptions;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -72,9 +72,15 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
 
     @Override
     public void onClick(View view) {
-        Bundle bndlanimation = ActivityOptions.makeCustomAnimation(this.context, R.transition.animation_in_1,R.transition.animation_in_2).toBundle();
-        Intent intent = new Intent(this.context, ShoppingDetailListActivity.class);
-        this.context.startActivity(intent, bndlanimation);
+        ((Activity) this.context).getFragmentManager().beginTransaction();
+
+        Fragment newFragment = new ShoppingDetailListActivity();
+        FragmentTransaction transaction = ((Activity) this.context).getFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.content_main, newFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
     }
 
     @Override

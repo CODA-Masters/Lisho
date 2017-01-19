@@ -1,0 +1,115 @@
+{
+  "project_info": {
+    "project_number": "707557434658",
+    "firebase_url": "https://manhattan-3f62b.firebaseio.com",
+    "project_id": "manhattan-3f62b",
+    "storage_bucket": "manhattan-3f62b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707557434658:android:57fca830f8bb0d02",
+        "android_client_info": {
+          "package_name": "com.codamasters.manhattan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707557434658-lk3k3lruroeh09g6ko8p8sq1bhvdjj2b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codamasters.manhattan",
+            "certificate_hash": "E85220022389A5E1BC2BD9E45B0E278938B456F1"
+          }
+        },
+        {
+          "client_id": "707557434658-oetsvfnk016fmiugafh06sol19hmeeqt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codamasters.manhattan",
+            "certificate_hash": "B38B8DD360146DB57FADB178167D6CF67C561823"
+          }
+        },
+        {
+          "client_id": "707557434658-iqoirtj6g9c8kg395fghkif8j0lhvp9t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgUFtD1xQPF1fY3L4dkQ5ImbOqY8X1G0Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "707557434658-iqoirtj6g9c8kg395fghkif8j0lhvp9t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707557434658:android:0e59698c7d76ec3c",
+        "android_client_info": {
+          "package_name": "com.codamasters.lisho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707557434658-ekptf3403o83cs7rvfeqgivf1klfruis.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codamasters.lisho",
+            "certificate_hash": "E85220022389A5E1BC2BD9E45B0E278938B456F1"
+          }
+        },
+        {
+          "client_id": "707557434658-7p0ft2a4mlka6estj2hpmtedjir01644.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codamasters.lisho",
+            "certificate_hash": "B38B8DD360146DB57FADB178167D6CF67C561823"
+          }
+        },
+        {
+          "client_id": "707557434658-iqoirtj6g9c8kg395fghkif8j0lhvp9t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgUFtD1xQPF1fY3L4dkQ5ImbOqY8X1G0Y"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "707557434658-iqoirtj6g9c8kg395fghkif8j0lhvp9t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_shopping_detail_list"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorButtonEnabled"
+    tools:context="com.codamasters.lisho.ui.ShoppingDetailListActivity">
+
+
+    <com.yalantis.beamazingtoday.ui.widget.BatRecyclerView
+        android:id="@+id/bat_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        app:add_button_color="@drawable/selector_button_add"
+        app:hint="Add new Shopping Item"
+        app:radio_button_res="@drawable/selector_radio_button" />
+
+</RelativeLayout>
