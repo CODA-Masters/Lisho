@@ -25,5 +25,9 @@
         <item name="colorControlActivated">#FFCC00</item>
     </style>
 
+    <style name="EditTextTintTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/md_black_1000</item>
+    </style>
+
 
 </resources>

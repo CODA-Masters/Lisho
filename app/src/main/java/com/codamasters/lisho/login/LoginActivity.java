@@ -22,12 +22,16 @@ public class LoginActivity extends AuthActivity {
     private FloatingActionButton fab;
     private CardView cardView;
     private Activity activity;
-    private final static String PREF_TAG = "Meditory";
+    private final static String PREF_TAG = "Lisho";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        enterFromBottomAnimation();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        setUpToolbarWithTitle("Login", true);
+
 
         activity = this;
 
@@ -38,6 +42,13 @@ public class LoginActivity extends AuthActivity {
         initView();
         initListeners();
     }
+
+    @Override
+    protected void onPause() {
+        exitToBottomAnimation();
+        super.onPause();
+    }
+
 
     private void initView(){
         cardView = (CardView) findViewById(R.id.cv);

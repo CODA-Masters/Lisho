@@ -50,4 +50,8 @@
     <string name="hint_dni">DNI</string>
     <string name="hint_date">Date</string>
 
+    <string name="text_input_title">Create New List</string>
+    <string name="text_input_message">Choose a name</string>
+    <string name="text_input_error_message">Please choose a name</string>
+
 </resources>

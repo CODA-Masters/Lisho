@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorButtonEnabled"
-    tools:context="com.codamasters.lisho.ui.ShoppingDetailListActivity">
+    tools:context="com.codamasters.lisho.ui.ShoppingDetailListFragment">
 
 
     <com.yalantis.beamazingtoday.ui.widget.BatRecyclerView

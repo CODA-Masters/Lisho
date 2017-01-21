@@ -35,7 +35,7 @@ public class ShoppingListRecAdapter extends RecyclerView.Adapter<ShoppingListHol
         // 3. Inflate the view and return the new ViewHolder
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(this.itemResource, parent, false);
-        return new ShoppingListHolder(this.context, view);
+        return new ShoppingListHolder(this.context, view, shoppingLists, this);
     }
 
     @Override

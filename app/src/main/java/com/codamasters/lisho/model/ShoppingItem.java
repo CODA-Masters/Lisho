@@ -11,6 +11,10 @@ public class ShoppingItem implements BatModel{
     private String name;
     private boolean isChecked;
 
+    public ShoppingItem(){
+
+    }
+
     public ShoppingItem(String name){
         this.name = name;
     }
@@ -19,7 +23,7 @@ public class ShoppingItem implements BatModel{
         return name;
     }
 
-    public void setNamme(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

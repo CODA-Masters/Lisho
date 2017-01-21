@@ -1,7 +1,9 @@
 package com.codamasters.lisho.ui;
 
+import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.util.Pair;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +12,10 @@ import android.view.View;
 
 import com.codamasters.lisho.R;
 import com.codamasters.lisho.adapter.ShoppingListRecAdapter;
+import com.codamasters.lisho.login.LoginActivity;
 import com.codamasters.lisho.model.ShoppingList;
 import com.codamasters.lisho.util.VerticalSpaceItemDecoration;
+import com.github.fabtransitionactivity.SheetLayout;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -22,24 +26,25 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
-import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
-import com.nightonke.boommenu.BoomButtons.HamButton;
-import com.nightonke.boommenu.BoomMenuButton;
-import com.nightonke.boommenu.ButtonEnum;
-import com.nightonke.boommenu.Piece.PiecePlaceEnum;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity implements SheetLayout.OnFabAnimationEndListener {
 
     private Toolbar toolbar;
-    private BoomMenuButton bmb;
+    private static final int REQUEST_CODE = 1;
 
 
     // RecyclerView
     private ShoppingListRecAdapter shoppingListRecAdapter;
     private RecyclerView recyclerView;
+    private ArrayList<ShoppingList> shoppingLists;
+
+    private FloatingActionButton fab;
+
+    private SheetLayout sheetLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +55,19 @@ public class MainActivity extends AppCompatActivity {
 
         initView();
         initDrawer();
-        initHamButton();
+        initFabButton();
+        initSheetLayout();
 
     }
 
+    @Override
+    public void onBackPressed(){
+        initFabButton();
+        super.onBackPressed();
+    }
+
     private void initView(){
-        bmb = (BoomMenuButton) findViewById(R.id.bmb);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -63,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
 
 
-        ArrayList<ShoppingList> shoppingLists = new ArrayList<>();
+        shoppingLists = new ArrayList<>();
         ShoppingList aux = new ShoppingList("1", 0, "Own List");
         ShoppingList aux2 = new ShoppingList("2", 1, "Group List");
         shoppingLists.add(aux);
@@ -104,21 +116,29 @@ public class MainActivity extends AppCompatActivity {
                 .withActionBarDrawerToggle(true)
                 .withActionBarDrawerToggleAnimated(true)
                 .addDrawerItems(
+                        new PrimaryDrawerItem().withName("Shopping Lists").withIcon(R.drawable.bat),
                         new PrimaryDrawerItem().withName("Remove ads").withIcon(R.drawable.bat),
                         new DividerDrawerItem(),
                         new SecondaryDrawerItem().withName("About").withIcon(R.drawable.dolphin),
                         new SecondaryDrawerItem().withName("Logout").withIcon(R.drawable.dolphin)
                 ).build();
 
+
         drawer.setOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
             @Override
             public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                 switch (position){
-                    case 1:
+                    case 1: FragmentManager fm = getFragmentManager();
+                        if (fm.getBackStackEntryCount() > 0) {
+                            onBackPressed();
+                            initFabButton();
+                        }
                         break;
-                    case 3: ;
+                    case 2:
                         break;
-                    case 4: ;
+                    case 4:;
+                        break;
+                    case 5: ;
                         break;
                 }
 
@@ -128,6 +148,43 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void initFabButton(){
+        fab.setImageResource(R.drawable.add);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //sheetLayout.expandFab();
+                showAddListDialog();
+            }
+        });
+    }
+
+    private void initSheetLayout(){
+
+        sheetLayout = (SheetLayout) findViewById(R.id.bottom_sheet);
+        sheetLayout.setFab(fab);
+        sheetLayout.setFabAnimationEndListener(this);
+
+    }
+
+
+    @Override
+    public void onFabAnimationEnd() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+            sheetLayout.contractFab();
+        }
+    }
+
+
+
+    /*
     private void initHamButton(){
         assert bmb != null;
         bmb.setButtonEnum(ButtonEnum.Ham);
@@ -154,5 +211,30 @@ public class MainActivity extends AppCompatActivity {
         bmb.addBuilder(builder);
 
     }
+    */
 
+
+    private void showAddListDialog(){
+        new LovelyTextInputDialog(this, R.style.EditTextTintTheme)
+                .setTopColorRes(R.color.md_deep_orange_800)
+                .setTitle(R.string.text_input_title)
+                .setMessage(R.string.text_input_message)
+                .setIcon(R.drawable.bat)
+                .setInputFilter(R.string.text_input_error_message, new LovelyTextInputDialog.TextFilter() {
+                    @Override
+                    public boolean check(String text) {
+                        return text.matches("\\w+");
+                    }
+                })
+                .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                    @Override
+                    public void onTextInputConfirmed(String text) {
+                        ShoppingList shoppingList = new ShoppingList("1", 0, text);
+                        shoppingLists.add(shoppingList);
+                        //shoppingListRecAdapter.notifyItemInserted(shoppingLists.size());
+                        shoppingListRecAdapter.notifyDataSetChanged();
+                    }
+                })
+                .show();
+    }
 }
