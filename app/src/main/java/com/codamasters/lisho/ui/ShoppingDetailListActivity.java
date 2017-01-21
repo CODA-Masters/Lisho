@@ -43,6 +43,7 @@ public class ShoppingDetailListActivity extends Fragment implements BatListener,
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         initBat();
     }
 
