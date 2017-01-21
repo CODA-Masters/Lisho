@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.codamasters.gamerstore.R;
+import com.codamasters.lisho.R;
 
 public class LoginActivity extends AuthActivity {
 

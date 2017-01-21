@@ -19,8 +19,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.codamasters.gamerstore.R;
-import com.codamasters.gamerstore.model.User;
+import com.codamasters.lisho.R;
+import com.codamasters.lisho.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
