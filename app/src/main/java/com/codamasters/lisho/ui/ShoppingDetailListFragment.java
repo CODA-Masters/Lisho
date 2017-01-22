@@ -42,15 +42,11 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
 
     private BatItemAnimator mAnimator;
 
-
     private FloatingActionButton fab;
 
-
     // Firebase
-
     private DatabaseReference databaseReference;
-    private String keyRemoved="";
-    private String movedKey="";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,27 +74,10 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
                 ShoppingItem model = dataSnapshot.getValue(ShoppingItem.class);
                 String key = dataSnapshot.getKey();
 
-                // Insert into the correct location, based on previousChildName
-                if(!mKeys.contains(key)) {
-                    if (s == null) {
-                        mGoals.add(0, model);
-                        mKeys.add(0, key);
-                    } else {
-                        int previousIndex = mKeys.indexOf(s);
-                        int nextIndex = previousIndex + 1;
-                        if (nextIndex == mGoals.size()) {
-                            mGoals.add(model);
-                            mKeys.add(key);
-                        } else {
-                            mGoals.add(nextIndex, model);
-                            mKeys.add(nextIndex, key);
-                        }
-                    }
-                    mAdapter.notify(AnimationType.ADD, 0);
-                }
+                mGoals.add(0, model);
+                mKeys.add(0, key);
 
-                mAdapter.notifyDataSetChanged();
-
+                mAdapter.notify(AnimationType.ADD, 0);
             }
 
             @Override
@@ -108,10 +87,9 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
                 ShoppingItem newModel = dataSnapshot.getValue(ShoppingItem.class);
                 int index = mKeys.indexOf(key);
 
-                if(!movedKey.equals(key)) {
-                    mGoals.set(index, newModel);
-                    mAdapter.notifyDataSetChanged();
-                }
+                mGoals.set(index, newModel);
+
+                mAdapter.notifyDataSetChanged();
 
             }
 
@@ -120,25 +98,26 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
                 String key = dataSnapshot.getKey();
                 int index = mKeys.indexOf(key);
 
-                if(!keyRemoved.equals(key)) {
-                    mKeys.remove(index);
-                    mGoals.remove(index);
+                mKeys.remove(index);
+                mGoals.remove(index);
 
+                mAdapter.notifyDataSetChanged();
 
-                    Log.d("COMIDA", "EHHMM BORRANDO");
-                    //mAdapter.notify(AnimationType.REMOVE, index);
-                    mAdapter.notifyDataSetChanged();
-
-                }
             }
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
+                Log.d("FIREBASE", "MOVED + ");
+
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
+                Log.d("FIREBASE", "CANCELLED + ");
+
 
             }
         });
@@ -184,45 +163,20 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
 
     @Override
     public void add(String string) {
-        mGoals.add(0, new ShoppingItem(string));
-        mAdapter.notify(AnimationType.ADD, 0);
         ShoppingItem shoppingList = new ShoppingItem(string);
-
-        DatabaseReference aux = databaseReference.push();
-        aux.setValue(shoppingList);
-        mKeys.add(aux.getKey());
+        databaseReference.push().setValue(shoppingList);
     }
 
     @Override
     public void delete(int position) {
-        keyRemoved = mKeys.get(position);
         databaseReference.child(mKeys.get(position)).removeValue();
-        mGoals.remove(position);
-        mKeys.remove(position);
-        mAdapter.notify(AnimationType.REMOVE, position);
     }
 
     @Override
     public void move(int from, int to) {
-        if (from >= 0 && to >= 0) {
-            mAnimator.setPosition(to);
-            BatModel model = mGoals.get(from);
-            mGoals.remove(model);
-            mGoals.add(to, model);
-
-            databaseReference.child(mKeys.get(from)).setValue(model);
-
-            String key = mKeys.get(from);
-            movedKey = key;
-            mKeys.remove(key);
-            mKeys.add(to, key);
-
-            mAdapter.notify(AnimationType.MOVE, from, to);
-
-            if (from == 0 || to == 0) {
-                mRecyclerView.getView().scrollToPosition(Math.min(from, to));
-            }
-        }
+        BatModel model = mGoals.get(from);
+        model.setChecked(!model.isChecked());
+        databaseReference.child(mKeys.get(from)).setValue(model);
     }
 
     @Override
