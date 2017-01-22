@@ -3,10 +3,12 @@ package com.codamasters.lisho.ui;
 import android.app.ActivityOptions;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +17,14 @@ import android.widget.Toast;
 import com.codamasters.lisho.R;
 import com.codamasters.lisho.login.LoginActivity;
 import com.codamasters.lisho.model.ShoppingItem;
+import com.codamasters.lisho.model.ShoppingList;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.yalantis.beamazingtoday.interfaces.AnimationType;
 import com.yalantis.beamazingtoday.interfaces.BatModel;
 import com.yalantis.beamazingtoday.listeners.BatListener;
@@ -30,12 +35,15 @@ import com.yalantis.beamazingtoday.ui.animator.BatItemAnimator;
 import com.yalantis.beamazingtoday.ui.callback.BatCallback;
 import com.yalantis.beamazingtoday.ui.widget.BatRecyclerView;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingDetailListFragment extends Fragment implements BatListener, OnItemClickListener, OnOutsideClickedListener {
 
     private static final int REQUEST_CODE = 1;
+    private final static String PREF_TAG = "Lisho";
+
 
     private BatRecyclerView mRecyclerView;
     private BatAdapter mAdapter;
@@ -49,6 +57,9 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
     // Firebase
     private DatabaseReference databaseReference;
 
+    private int typeList;
+    private String idList;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,15 +70,48 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            typeList = bundle.getInt("type", 0);
+            idList = bundle.getString("id", "");
+        }
+
         initBat();
         initFabButton();
-        initFirebase();
+
+        if(typeList == ShoppingList.GROUP_LIST)
+            initFirebase();
+        else
+            initWithPrefs();
+    }
+
+    private void initWithPrefs(){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_TAG, getActivity().MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(idList, "");
+        Type type = new TypeToken<List<ShoppingItem>>(){}.getType();
+        mGoals = gson.fromJson(json, type);
+        if(mGoals==null){
+            mGoals = new ArrayList<>();
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void savePrefs(){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_TAG, getActivity().MODE_PRIVATE);
+
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(mGoals);
+        prefsEditor.putString(idList, json);
+        prefsEditor.commit();
     }
 
 
     private void initFirebase(){
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("detailLists").child("1");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("detailLists").child(idList);
 
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
@@ -146,6 +190,10 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
         mRecyclerView.getView().setLayoutManager(new LinearLayoutManager(getActivity()));
         mGoals = new ArrayList<>();
         mKeys = new ArrayList<>();
+
+
+        Log.d("LOL", "Creating arraylist");
+
         mRecyclerView.getView().setAdapter(mAdapter = new BatAdapter(mGoals, this, mAnimator).setOnItemClickListener(this).setOnOutsideClickListener(this));
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new BatCallback(this));
@@ -164,19 +212,39 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
     @Override
     public void add(String string) {
         ShoppingItem shoppingList = new ShoppingItem(string);
-        databaseReference.push().setValue(shoppingList);
+
+        if(typeList == ShoppingList.GROUP_LIST)
+            databaseReference.push().setValue(shoppingList);
+        else{
+            mGoals.add(0, shoppingList);
+            mAdapter.notify(AnimationType.ADD, 0);
+            savePrefs();
+        }
     }
 
     @Override
     public void delete(int position) {
-        databaseReference.child(mKeys.get(position)).removeValue();
+        if(typeList == ShoppingList.GROUP_LIST)
+            databaseReference.child(mKeys.get(position)).removeValue();
+        else {
+            mGoals.remove(position);
+            mAdapter.notify(AnimationType.REMOVE, position);
+            savePrefs();
+        }
     }
 
     @Override
     public void move(int from, int to) {
         BatModel model = mGoals.get(from);
         model.setChecked(!model.isChecked());
-        databaseReference.child(mKeys.get(from)).setValue(model);
+
+        if(typeList == ShoppingList.GROUP_LIST) {
+            databaseReference.child(mKeys.get(from)).setValue(model);
+        }else{
+            mGoals.set(from, model);
+            mAdapter.notifyDataSetChanged();
+            savePrefs();
+        }
     }
 
     @Override

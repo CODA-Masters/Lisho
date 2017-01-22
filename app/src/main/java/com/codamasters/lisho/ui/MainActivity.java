@@ -76,8 +76,8 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
 
 
         shoppingLists = new ArrayList<>();
-        ShoppingList aux = new ShoppingList("1", 0, "Own List");
-        ShoppingList aux2 = new ShoppingList("2", 1, "Group List");
+        ShoppingList aux = new ShoppingList("1", 1, "Group List");
+        ShoppingList aux2 = new ShoppingList("2", 0, "Own List");
         shoppingLists.add(aux);
         shoppingLists.add(aux2);
 

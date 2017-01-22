@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -83,6 +84,10 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
         ((Activity) this.context).getFragmentManager().beginTransaction();
 
         Fragment newFragment = new ShoppingDetailListFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("type", shoppingList.getType());
+        bundle.putString("id", shoppingList.getId());
+        newFragment.setArguments(bundle);
         FragmentTransaction transaction = ((Activity) this.context).getFragmentManager().beginTransaction();
 
         transaction.replace(R.id.content_main, newFragment);
@@ -101,8 +106,8 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
     private void initHamButton(){
         assert bmb != null;
         bmb.setButtonEnum(ButtonEnum.TextInsideCircle);
-        bmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_3_1);
-        bmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_3_1);
+        bmb.setPiecePlaceEnum(PiecePlaceEnum.DOT_4_2);
+        bmb.setButtonPlaceEnum(ButtonPlaceEnum.SC_4_2);
         bmb.setInList(true);
 
         bmb.clearBuilders();
@@ -110,6 +115,17 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
         TextInsideCircleButton.Builder builder = new TextInsideCircleButton.Builder()
                 .normalImageRes(R.drawable.butterfly)
                 .normalText("Share")
+                .listener(new OnBMClickListener() {
+                    @Override
+                    public void onBoomButtonClick(int index) {
+
+                    }
+                });
+        bmb.addBuilder(builder);
+
+        builder = new TextInsideCircleButton.Builder()
+                .normalImageRes(R.drawable.cat)
+                .normalText("Users")
                 .listener(new OnBMClickListener() {
                     @Override
                     public void onBoomButtonClick(int index) {
@@ -136,7 +152,6 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
                     @Override
                     public void onBoomButtonClick(int index) {
                         removeAt(getAdapterPosition());
-
                     }
                 });
         bmb.addBuilder(builder);
