@@ -304,6 +304,5 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
 
         mRecyclerView.revertAnimation();
     }
-
-
+    
 }
