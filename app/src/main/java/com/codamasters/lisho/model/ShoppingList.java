@@ -1,5 +1,8 @@
 package com.codamasters.lisho.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Juan on 15/01/2017.
  */
@@ -12,6 +15,8 @@ public class ShoppingList {
     private String id;
     private int type;
     private String title;
+    private List<String> users;
+
 
     public ShoppingList(){
 
@@ -21,6 +26,7 @@ public class ShoppingList {
         this.id = id;
         this.type = type;
         this.title = title;
+        this.users = new ArrayList<>();
     }
 
     public String getId() {
@@ -46,4 +52,14 @@ public class ShoppingList {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public List<String> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<String> users) {
+        this.users = users;
+    }
 }
+
+

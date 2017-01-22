@@ -10,6 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -44,7 +47,6 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
     private static final int REQUEST_CODE = 1;
     private final static String PREF_TAG = "Lisho";
 
-
     private BatRecyclerView mRecyclerView;
     private BatAdapter mAdapter;
     private List<BatModel> mGoals;
@@ -64,6 +66,7 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.activity_shopping_detail_list, container, false);
     }
 
@@ -73,29 +76,52 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
 
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            typeList = bundle.getInt("type", 0);
+            typeList = bundle.getInt("type", ShoppingList.OWN_LIST);
             idList = bundle.getString("id", "");
         }
 
-        initBat();
         initFabButton();
 
-        if(typeList == ShoppingList.GROUP_LIST)
+        if(typeList == ShoppingList.GROUP_LIST) {
+            mGoals = new ArrayList<>();
+            mKeys = new ArrayList<>();
+            initBat();
             initFirebase();
-        else
+        }else {
             initWithPrefs();
+            initBat();
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // TODO Add your menu entries here
+        inflater.inflate(R.menu.menu_detail_list, menu);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if(id == R.id.addUser){
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getActivity(), R.transition.animation_in_1,R.transition.animation_in_2).toBundle();
+            startActivity(intent, bndlanimation);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initWithPrefs(){
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_TAG, getActivity().MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPreferences.getString(idList, "");
-        Type type = new TypeToken<List<ShoppingItem>>(){}.getType();
+        Type type = new TypeToken<ArrayList<ShoppingItem>>(){}.getType();
         mGoals = gson.fromJson(json, type);
         if(mGoals==null){
             mGoals = new ArrayList<>();
         }
-        mAdapter.notifyDataSetChanged();
     }
 
     private void savePrefs(){
@@ -106,6 +132,16 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
         String json = gson.toJson(mGoals);
         prefsEditor.putString(idList, json);
         prefsEditor.commit();
+
+        Log.d("LOL", "SAVING ITEMS");
+
+    }
+
+    private String uploadListToFirebase(){
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("detailLists").push();
+        databaseReference.setValue(mGoals);
+
+        return databaseReference.getKey();
     }
 
 
@@ -168,6 +204,9 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
     private void initFabButton(){
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
 
+
+        fab.setVisibility(View.INVISIBLE);
+
         fab.setImageResource(R.drawable.add_user);
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -188,9 +227,6 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
         mAnimator = new BatItemAnimator();
 
         mRecyclerView.getView().setLayoutManager(new LinearLayoutManager(getActivity()));
-        mGoals = new ArrayList<>();
-        mKeys = new ArrayList<>();
-
 
         Log.d("LOL", "Creating arraylist");
 
@@ -213,9 +249,14 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
     public void add(String string) {
         ShoppingItem shoppingList = new ShoppingItem(string);
 
-        if(typeList == ShoppingList.GROUP_LIST)
+        if(typeList == ShoppingList.GROUP_LIST) {
+            Log.d("LOL", "ADDING ITEM ONLINE");
+
             databaseReference.push().setValue(shoppingList);
-        else{
+        }else{
+
+            Log.d("LOL", "ADDING ITEM");
+
             mGoals.add(0, shoppingList);
             mAdapter.notify(AnimationType.ADD, 0);
             savePrefs();
@@ -227,6 +268,9 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
         if(typeList == ShoppingList.GROUP_LIST)
             databaseReference.child(mKeys.get(position)).removeValue();
         else {
+
+            Log.d("LOL", "DELETING ITEM");
+
             mGoals.remove(position);
             mAdapter.notify(AnimationType.REMOVE, position);
             savePrefs();
@@ -241,6 +285,8 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
         if(typeList == ShoppingList.GROUP_LIST) {
             databaseReference.child(mKeys.get(from)).setValue(model);
         }else{
+            Log.d("LOL", "MOVING ITEM");
+
             mGoals.set(from, model);
             mAdapter.notifyDataSetChanged();
             savePrefs();
@@ -254,6 +300,8 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
 
     @Override
     public void onOutsideClicked() {
+        Log.d("LOL", "OUTSIDE CLICKED");
+
         mRecyclerView.revertAnimation();
     }
 

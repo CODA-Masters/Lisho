@@ -2,12 +2,14 @@ package com.codamasters.lisho.ui;
 
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.codamasters.lisho.R;
@@ -16,6 +18,13 @@ import com.codamasters.lisho.login.LoginActivity;
 import com.codamasters.lisho.model.ShoppingList;
 import com.codamasters.lisho.util.VerticalSpaceItemDecoration;
 import com.github.fabtransitionactivity.SheetLayout;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
 import com.mikepenz.materialdrawer.Drawer;
@@ -28,23 +37,29 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements SheetLayout.OnFabAnimationEndListener {
 
     private Toolbar toolbar;
     private static final int REQUEST_CODE = 1;
+    private static final String PREF_TAG = "Lisho";
+    private static final String LISTS_TAG = "lists";
 
 
     // RecyclerView
     private ShoppingListRecAdapter shoppingListRecAdapter;
     private RecyclerView recyclerView;
     private ArrayList<ShoppingList> shoppingLists;
+    private ArrayList<String> shoppingListKeys;
 
     private FloatingActionButton fab;
-
     private SheetLayout sheetLayout;
 
+    // Firebase
+    private DatabaseReference databaseReference;
+    private String userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        initWithPrefs();
+        shoppingListKeys = new ArrayList<>();
         initView();
         initDrawer();
         initFabButton();
@@ -74,13 +91,11 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-
-        shoppingLists = new ArrayList<>();
+        /*shoppingLists = new ArrayList<>();
         ShoppingList aux = new ShoppingList("1", 1, "Group List");
         ShoppingList aux2 = new ShoppingList("2", 0, "Own List");
         shoppingLists.add(aux);
-        shoppingLists.add(aux2);
-
+        shoppingLists.add(aux2);*/
 
         shoppingListRecAdapter = new ShoppingListRecAdapter(this, R.layout.item_shopping_list, shoppingLists);
         recyclerView.setHasFixedSize(true);
@@ -89,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
 
 
     }
-
 
     private void initDrawer(){
         AccountHeader headerResult = new AccountHeaderBuilder()
@@ -149,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
     }
 
     private void initFabButton(){
+        fab.setVisibility(View.VISIBLE);
+
         fab.setImageResource(R.drawable.add);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,6 +196,30 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
         if (requestCode == REQUEST_CODE) {
             sheetLayout.contractFab();
         }
+    }
+
+    private void initWithPrefs(){
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_TAG, MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(LISTS_TAG, "");
+        Type type = new TypeToken<ArrayList<ShoppingList>>(){}.getType();
+        shoppingLists = gson.fromJson(json, type);
+        if(shoppingLists==null){
+            shoppingLists = new ArrayList<>();
+        }
+    }
+
+    private void savePrefs(){
+        SharedPreferences sharedPreferences = getSharedPreferences(PREF_TAG, MODE_PRIVATE);
+
+        SharedPreferences.Editor prefsEditor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(shoppingLists);
+        prefsEditor.putString(LISTS_TAG, json);
+        prefsEditor.commit();
+
+        Log.d("LOL", "SAVING ITEMS");
+
     }
 
 
@@ -233,8 +273,54 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
                         shoppingLists.add(shoppingList);
                         //shoppingListRecAdapter.notifyItemInserted(shoppingLists.size());
                         shoppingListRecAdapter.notifyDataSetChanged();
+                        savePrefs();
                     }
                 })
                 .show();
+    }
+
+
+    private void initFirebase(){
+
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("user_lists").child(userId);
+
+        databaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                ShoppingList model = dataSnapshot.getValue(ShoppingList.class);
+                String key = dataSnapshot.getKey();
+
+                shoppingLists.add(model);
+                shoppingListRecAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s){
+
+                /*String key = dataSnapshot.getKey();
+                ShoppingList newModel = dataSnapshot.getValue(ShoppingList.class);
+                int index = mKeys.indexOf(key);
+                shoppingLists.set(index, newModel);
+                shoppingListRecAdapter.notifyDataSetChanged();*/
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 }
