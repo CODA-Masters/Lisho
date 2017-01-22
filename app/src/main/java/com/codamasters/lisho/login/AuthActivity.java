@@ -211,6 +211,7 @@ public class AuthActivity extends AppCompatActivity {
         }
     }
 
+    /*
     protected void enterFromBottomAnimation(){
         overridePendingTransition(R.transition.activity_open_translate_from_bottom, R.transition.activity_no_animation);
     }
@@ -218,6 +219,7 @@ public class AuthActivity extends AppCompatActivity {
     protected void exitToBottomAnimation(){
         overridePendingTransition(R.transition.activity_no_animation, R.transition.activity_close_translate_to_bottom);
     }
+    */
 
 
 }

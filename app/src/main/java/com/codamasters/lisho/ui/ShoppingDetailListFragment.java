@@ -1,17 +1,19 @@
 package com.codamasters.lisho.ui;
 
+import android.app.ActivityOptions;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.codamasters.lisho.R;
+import com.codamasters.lisho.login.LoginActivity;
 import com.codamasters.lisho.model.ShoppingItem;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -108,16 +110,10 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                Log.d("FIREBASE", "MOVED + ");
-
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
-                Log.d("FIREBASE", "CANCELLED + ");
-
 
             }
         });
@@ -133,6 +129,10 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getActivity(), R.transition.animation_in_1,R.transition.animation_in_2).toBundle();
+                startActivity(intent, bndlanimation);
+
             }
         });
     }

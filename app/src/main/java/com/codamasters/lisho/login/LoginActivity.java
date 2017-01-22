@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,12 +28,11 @@ public class LoginActivity extends AuthActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        enterFromBottomAnimation();
+        //enterFromBottomAnimation();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setUpToolbarWithTitle("Login", true);
-
 
         activity = this;
 
@@ -45,7 +46,7 @@ public class LoginActivity extends AuthActivity {
 
     @Override
     protected void onPause() {
-        exitToBottomAnimation();
+        //exitToBottomAnimation();
         super.onPause();
     }
 
@@ -108,6 +109,32 @@ public class LoginActivity extends AuthActivity {
         }
 
         return valid;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.transition.animation_out_1, R.transition.animation_out_2);
     }
 
 }

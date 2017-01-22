@@ -125,6 +125,37 @@
                     >
                 </Button>
             </RelativeLayout>
+
+
+
+            <TextView
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#9a9a9a"
+                android:textSize="12sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="- or - "
+                android:layout_marginBottom="10dp"
+                />
+
+            <RelativeLayout
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="60dp">
+                <Button
+                android:id="@+id/google_sign"
+                android:background="@drawable/bt_shape"
+                android:stateListAnimator="@drawable/state_list_animator_z"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:text="Login with Google"
+                android:textColor="@color/colorPrimaryDark"
+                >
+            </Button>
+            </RelativeLayout>
+
+
             <TextView
                 android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
@@ -143,8 +174,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:fabSize="normal"
-        app:backgroundTint="@color/colorAccent"
-        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/md_red_800"
+        android:src="@drawable/add"
         android:transitionName="loginFab"
         android:layout_alignTop="@id/cv"
         android:layout_marginTop="25dp"
