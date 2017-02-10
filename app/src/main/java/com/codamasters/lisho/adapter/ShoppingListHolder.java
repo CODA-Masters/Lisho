@@ -33,6 +33,7 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
 
     private List<ShoppingList> shoppingLists;
     private ShoppingList shoppingList;
+    private String shoppingListKey;
     private Context context;
     private ShoppingListRecAdapter shoppingListRecAdapter;
 
@@ -59,7 +60,7 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
 
     }
 
-    public void bindStock(ShoppingList shoppingList){
+    public void bindStock(ShoppingList shoppingList, String shoppingListKey){
 
         this.shoppingList = shoppingList;
 
@@ -73,6 +74,7 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
         }
 
         this.shoppingListTitle.setText(shoppingList.getTitle());
+        this.shoppingListKey = shoppingListKey;
 
 
         this.initHamButton();
@@ -86,7 +88,7 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
         Fragment newFragment = new ShoppingDetailListFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("type", shoppingList.getType());
-        bundle.putString("id", shoppingList.getId());
+        bundle.putString("key", shoppingListKey);
         newFragment.setArguments(bundle);
         FragmentTransaction transaction = ((Activity) this.context).getFragmentManager().beginTransaction();
 

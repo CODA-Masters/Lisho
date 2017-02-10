@@ -17,16 +17,18 @@ import java.util.List;
 public class ShoppingListRecAdapter extends RecyclerView.Adapter<ShoppingListHolder> {
 
     private final List<ShoppingList> shoppingLists;
+    private final List<String> shoppingListsKeys;
     private Context context;
     private int itemResource;
 
 
-    public ShoppingListRecAdapter(Context context, int itemResource, List<ShoppingList> shoppingLists) {
+    public ShoppingListRecAdapter(Context context, int itemResource, List<ShoppingList> shoppingLists, List<String> shoppingListsKeys) {
 
         // 1. Initialize our adapter
         this.shoppingLists = shoppingLists;
         this.context = context;
         this.itemResource = itemResource;
+        this.shoppingListsKeys = shoppingListsKeys;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class ShoppingListRecAdapter extends RecyclerView.Adapter<ShoppingListHol
     @Override
     public void onBindViewHolder(ShoppingListHolder holder, int position) {
         ShoppingList shoppingList = this.shoppingLists.get(position);
-        holder.bindStock(shoppingList);
+        holder.bindStock(shoppingList, this.shoppingListsKeys.get(position));
     }
 
     @Override

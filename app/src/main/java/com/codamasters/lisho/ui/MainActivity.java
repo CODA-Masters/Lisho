@@ -85,8 +85,9 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
         recyclerView.setLayoutManager(linearLayoutManager);
 
         shoppingLists = new ArrayList<>();
+        shoppingListKeys = new ArrayList<>();
 
-        shoppingListRecAdapter = new ShoppingListRecAdapter(this, R.layout.item_shopping_list, shoppingLists);
+        shoppingListRecAdapter = new ShoppingListRecAdapter(this, R.layout.item_shopping_list, shoppingLists, shoppingListKeys);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(shoppingListRecAdapter);
         recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(24));
@@ -234,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
                 .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
                     @Override
                     public void onTextInputConfirmed(String text) {
-                        ShoppingList shoppingList = new ShoppingList("1", 0, text);
+                        ShoppingList shoppingList = new ShoppingList("1", 1, text);
                         addToOwnUser(shoppingList);
                     }
                 })
@@ -249,11 +250,16 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
         String key = databaseReference.getKey();
         databaseReference.setValue(shoppingList);
 
-        // Añadimos el key de la lista al usuario
+        // Añadimos la key de la lista al usuario
         FirebaseDatabase.getInstance().getReference().child("user").child(userId).push().setValue(key);
     }
 
     private void initFirebase(){
+
+        userId = "test";
+        //userId = "juan@gmail.com";
+
+        userId = userId.replace(".", "_");
 
         // Cargamos las key del usuario propio y consultamos en base a esa key la lista
         databaseReference = FirebaseDatabase.getInstance().getReference().child("user").child(userId);
