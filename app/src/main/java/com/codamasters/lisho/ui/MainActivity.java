@@ -264,6 +264,18 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
         // Cargamos las key del usuario propio y consultamos en base a esa key la lista
         databaseReference = FirebaseDatabase.getInstance().getReference().child("user").child(userId);
 
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

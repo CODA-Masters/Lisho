@@ -6,11 +6,11 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.support.v7.widget.RecyclerView;
 
 import com.codamasters.lisho.R;
 import com.codamasters.lisho.model.ShoppingList;
@@ -29,7 +29,6 @@ import java.util.List;
  */
 
 public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
-
 
     private List<ShoppingList> shoppingLists;
     private ShoppingList shoppingList;
