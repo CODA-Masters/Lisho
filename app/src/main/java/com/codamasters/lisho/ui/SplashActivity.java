@@ -1,17 +1,16 @@
 package com.codamasters.lisho.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import java.net.InetAddress;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -24,10 +23,10 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         if(loadUser())
-            if(isInternetAvailable()){
+            if(hasActiveInternetConnection()){
                 checkConnectionWithFirebase();
             }else{
-                Toast.makeText(getApplicationContext(), "ERROR CONEXIÓN, NO INTERNET", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
             }
         else{
             startActivity(new Intent(this, MainActivity.class));
@@ -48,15 +47,10 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
-    public boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com"); //You can replace it with your name
-            return !ipAddr.equals("");
+    private boolean hasActiveInternetConnection() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        } catch (Exception e) {
-            return false;
-        }
-
+        return cm.getActiveNetworkInfo() != null;
     }
 
     private void checkConnectionWithFirebase() {
@@ -66,13 +60,12 @@ public class SplashActivity extends AppCompatActivity {
                 boolean connected = (Boolean) dataSnapshot.getValue();
                 if (connected) {
                     startActivity(new Intent(SplashActivity.this, MainActivity.class));
-                    Toast.makeText(getApplicationContext(), "CONECTADO", Toast.LENGTH_LONG).show();
-                };
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), "ERROR CONEXIÓN", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
             }
         });
     }

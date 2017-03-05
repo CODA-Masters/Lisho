@@ -5,16 +5,18 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.support.v7.widget.RecyclerView;
 
 import com.codamasters.lisho.R;
 import com.codamasters.lisho.model.ShoppingList;
 import com.codamasters.lisho.ui.ShoppingDetailListFragment;
+import com.google.firebase.database.FirebaseDatabase;
 import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
 import com.nightonke.boommenu.BoomButtons.TextInsideCircleButton;
@@ -29,6 +31,8 @@ import java.util.List;
  */
 
 public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+
+    private final static String PREF_TAG = "Lisho";
 
     private List<ShoppingList> shoppingLists;
     private ShoppingList shoppingList;
@@ -153,10 +157,29 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
                     @Override
                     public void onBoomButtonClick(int index) {
                         removeAt(getAdapterPosition());
+                        removeFromOwnUser(shoppingList, shoppingListKey);
                     }
                 });
         bmb.addBuilder(builder);
 
+    }
+
+    public void removeFromOwnUser(ShoppingList shoppingList, String key){
+
+        // Eliminamos la referencia al usuario
+        SharedPreferences prefs = context.getSharedPreferences(PREF_TAG, context.MODE_PRIVATE);
+        String userId = prefs.getString("user_id", null);
+        userId = "juan@gmail_com";
+
+
+        FirebaseDatabase.getInstance().getReference().child("user").child(userId).child(key).removeValue();
+
+        // TODO : ELIMINAR LISTAS (deberia omitirse para estudiar información)
+        // En caso de que sea el ultimo usuario que tenga acceso a la lista se eliminará completamente de la base de datos
+        if(shoppingList.getUsers().size() == 1) {
+            FirebaseDatabase.getInstance().getReference().child("lists").child(key).removeValue();
+            FirebaseDatabase.getInstance().getReference().child("detailLists").child(key).removeValue();
+        }
     }
 
 

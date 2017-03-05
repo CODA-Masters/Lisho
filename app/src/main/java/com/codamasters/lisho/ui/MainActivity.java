@@ -1,14 +1,22 @@
 package com.codamasters.lisho.ui;
 
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.codamasters.lisho.R;
 import com.codamasters.lisho.adapter.ShoppingListRecAdapter;
@@ -55,6 +63,11 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
     private ArrayList<String> shoppingListKeys;
 
 
+    // ConnectionBroadCaster
+    private BroadcastReceiver networkStateReceiver;
+    private Snackbar snackbar;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,13 +83,55 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
 
     }
 
+    public void onResume() {
+        super.onResume();
+        initBroadCastReceiver();
+    }
+
+    public void onPause() {
+        super.onPause();
+        this.unregisterReceiver(this.networkStateReceiver);
+    }
+
+
+    private void initBroadCastReceiver() {
+
+        snackbar = Snackbar.make(findViewById(R.id.coordinatorLayout), "No internet connection!", Snackbar.LENGTH_INDEFINITE);
+
+        // Changing action button text color
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.YELLOW);
+
+        networkStateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getExtras() != null) {
+                    NetworkInfo ni = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
+                    if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
+                        snackbar.dismiss();
+                    }
+                }
+                if (intent.getExtras().getBoolean(ConnectivityManager.EXTRA_NO_CONNECTIVITY, Boolean.FALSE)) {
+                    snackbar.show();
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+
+        this.registerReceiver(this.networkStateReceiver, filter);
+    }
+
+
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         initFabButton();
         super.onBackPressed();
     }
 
-    private void initView(){
+    private void initView() {
         fab = (FloatingActionButton) findViewById(R.id.fab);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
 
@@ -95,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
 
     }
 
-    private void initDrawer(){
+    private void initDrawer() {
         AccountHeader headerResult = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.header3)
@@ -131,8 +186,9 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
         drawer.setOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
             @Override
             public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                switch (position){
-                    case 1: FragmentManager fm = getFragmentManager();
+                switch (position) {
+                    case 1:
+                        FragmentManager fm = getFragmentManager();
                         if (fm.getBackStackEntryCount() > 0) {
                             onBackPressed();
                             initFabButton();
@@ -140,9 +196,11 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
                         break;
                     case 2:
                         break;
-                    case 4:;
+                    case 4:
+                        ;
                         break;
-                    case 5: ;
+                    case 5:
+                        ;
                         break;
                 }
 
@@ -152,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
         });
     }
 
-    private void initFabButton(){
+    private void initFabButton() {
         fab.setVisibility(View.VISIBLE);
 
         fab.setImageResource(R.drawable.add);
@@ -165,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
         });
     }
 
-    private void initSheetLayout(){
+    private void initSheetLayout() {
 
         sheetLayout = (SheetLayout) findViewById(R.id.bottom_sheet);
         sheetLayout.setFab(fab);
@@ -220,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
     */
 
 
-    private void showAddListDialog(){
+    private void showAddListDialog() {
         new LovelyTextInputDialog(this, R.style.EditTextTintTheme)
                 .setTopColorRes(R.color.md_deep_orange_800)
                 .setTitle(R.string.text_input_title)
@@ -235,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
                 .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
                     @Override
                     public void onTextInputConfirmed(String text) {
-                        ShoppingList shoppingList = new ShoppingList("1", 1, text);
+                        ShoppingList shoppingList = new ShoppingList("1", 1, text, userId);
                         addToOwnUser(shoppingList);
                     }
                 })
@@ -243,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
     }
 
 
-    private void addToOwnUser(ShoppingList shoppingList){
+    private void addToOwnUser(ShoppingList shoppingList) {
 
         // Añadimos el objeto a listas
         databaseReference = FirebaseDatabase.getInstance().getReference().child("lists").push();
@@ -251,13 +309,13 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
         databaseReference.setValue(shoppingList);
 
         // Añadimos la key de la lista al usuario
-        FirebaseDatabase.getInstance().getReference().child("user").child(userId).push().setValue(key);
+        FirebaseDatabase.getInstance().getReference().child("user").child(userId).child(key).setValue(key);
     }
 
-    private void initFirebase(){
+    private void initFirebase() {
 
-        userId = "test";
-        //userId = "juan@gmail.com";
+        //userId = "test";
+        userId = "juan@gmail.com";
 
         userId = userId.replace(".", "_");
 

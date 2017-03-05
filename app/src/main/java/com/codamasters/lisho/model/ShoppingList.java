@@ -22,11 +22,12 @@ public class ShoppingList {
 
     }
 
-    public ShoppingList(String id, int type, String title){
+    public ShoppingList(String id, int type, String title, String user){
         this.id = id;
         this.type = type;
         this.title = title;
         this.users = new ArrayList<>();
+        this.users.add(user);
     }
 
     public String getId() {
