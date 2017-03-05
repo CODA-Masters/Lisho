@@ -5,10 +5,13 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -28,6 +31,7 @@ import com.nightonke.boommenu.ButtonEnum;
 import com.nightonke.boommenu.Piece.PiecePlaceEnum;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -138,7 +142,7 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
                 .listener(new OnBMClickListener() {
                     @Override
                     public void onBoomButtonClick(int index) {
-
+                        showUserList();
                     }
                 });
         bmb.addBuilder(builder);
@@ -183,15 +187,51 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
                 .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
                     @Override
                     public void onTextInputConfirmed(String text) {
-                        updateName(shoppingListKey, text);
+                        updateName(text);
                     }
                 })
                 .show();
     }
 
+    private void showUserList(){
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+        builderSingle.setIcon(R.drawable.bat);
+        builderSingle.setTitle("User list :");
 
-    public void updateName(String key, final String name){
-        FirebaseDatabase.getInstance().getReference().child("lists").child(key).child("title").setValue(name, new DatabaseReference.CompletionListener() {
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(context, android.R.layout.select_dialog_item);
+
+        ArrayList<String> users = new ArrayList<>();
+
+        for(String user : shoppingList.getUsers()){
+            String[] subStrings = user.split("@");
+            subStrings[1] = subStrings[1].replace("_", ".");
+            String aux = subStrings[0] + "@" + subStrings[1];
+
+            users.add(aux);
+
+        }
+
+        arrayAdapter.addAll(users);
+
+        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        builderSingle.show();
+    }
+
+
+    public void updateName(final String name){
+        FirebaseDatabase.getInstance().getReference().child("lists").child(shoppingListKey).child("title").setValue(name, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 // TODO : forced change, not caused by Firebase onChanged
