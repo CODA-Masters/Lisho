@@ -54,4 +54,7 @@
     <string name="text_input_message">Choose a name</string>
     <string name="text_input_error_message">Please choose a name</string>
 
+    <string name="text_input_title_change_name">Change list name</string>
+
+
 </resources>

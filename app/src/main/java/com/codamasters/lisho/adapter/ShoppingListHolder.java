@@ -12,10 +12,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.codamasters.lisho.R;
 import com.codamasters.lisho.model.ShoppingList;
 import com.codamasters.lisho.ui.ShoppingDetailListFragment;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.nightonke.boommenu.BoomButtons.ButtonPlaceEnum;
 import com.nightonke.boommenu.BoomButtons.OnBMClickListener;
@@ -23,6 +26,7 @@ import com.nightonke.boommenu.BoomButtons.TextInsideCircleButton;
 import com.nightonke.boommenu.BoomMenuButton;
 import com.nightonke.boommenu.ButtonEnum;
 import com.nightonke.boommenu.Piece.PiecePlaceEnum;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import java.util.List;
 
@@ -145,7 +149,7 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
                 .listener(new OnBMClickListener() {
                     @Override
                     public void onBoomButtonClick(int index) {
-
+                        showUpdateNameDialog();
                     }
                 });
         bmb.addBuilder(builder);
@@ -161,6 +165,44 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
                     }
                 });
         bmb.addBuilder(builder);
+
+    }
+
+    private void showUpdateNameDialog() {
+        new LovelyTextInputDialog(context, R.style.EditTextTintTheme)
+                .setTopColorRes(R.color.md_deep_orange_800)
+                .setTitle(R.string.text_input_title)
+                .setMessage(R.string.text_input_title_change_name)
+                .setIcon(R.drawable.bat)
+                .setInputFilter(R.string.text_input_error_message, new LovelyTextInputDialog.TextFilter() {
+                    @Override
+                    public boolean check(String text) {
+                        return text.matches("\\w+");
+                    }
+                })
+                .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                    @Override
+                    public void onTextInputConfirmed(String text) {
+                        updateName(shoppingListKey, text);
+                    }
+                })
+                .show();
+    }
+
+
+    public void updateName(String key, final String name){
+        FirebaseDatabase.getInstance().getReference().child("lists").child(key).child("title").setValue(name, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                // TODO : forced change, not caused by Firebase onChanged
+                if(databaseError==null)
+                    shoppingListTitle.setText(name);
+                else
+                    Toast.makeText(context, "Error updating name. Try again.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
 
     }
 
