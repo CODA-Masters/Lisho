@@ -255,6 +255,8 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
 
 
         FirebaseDatabase.getInstance().getReference().child("user").child(userId).child(key).removeValue();
+        FirebaseDatabase.getInstance().getReference().child("lists").child(key).child("users").child(String.valueOf(shoppingList.getUsers().indexOf(userId))).removeValue();
+
 
         // TODO : ELIMINAR LISTAS (deberia omitirse para estudiar información)
         // En caso de que sea el ultimo usuario que tenga acceso a la lista se eliminará completamente de la base de datos
