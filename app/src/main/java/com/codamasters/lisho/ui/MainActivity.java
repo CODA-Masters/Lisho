@@ -11,7 +11,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 
 import com.codamasters.lisho.R;
 import com.codamasters.lisho.adapter.ShoppingListRecAdapter;
+import com.codamasters.lisho.login.AuthActivity;
 import com.codamasters.lisho.login.LoginActivity;
 import com.codamasters.lisho.model.ShoppingList;
 import com.codamasters.lisho.util.VerticalSpaceItemDecoration;
@@ -44,7 +44,7 @@ import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements SheetLayout.OnFabAnimationEndListener {
+public class MainActivity extends AuthActivity implements SheetLayout.OnFabAnimationEndListener {
 
     private Toolbar toolbar;
     private static final int REQUEST_CODE = 1;
@@ -197,10 +197,9 @@ public class MainActivity extends AppCompatActivity implements SheetLayout.OnFab
                     case 2:
                         break;
                     case 4:
-                        ;
                         break;
                     case 5:
-                        ;
+                        signOut();
                         break;
                 }
 

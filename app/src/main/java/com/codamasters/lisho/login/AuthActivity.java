@@ -12,13 +12,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.codamasters.lisho.R;
-import com.codamasters.lisho.model.User;
 import com.codamasters.lisho.ui.MainActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 
 /**
  * Created by Juan on 21/09/2016.
@@ -31,9 +33,7 @@ public class AuthActivity extends AppCompatActivity {
 
     public FirebaseAuth mAuth;
     public FirebaseAuth.AuthStateListener mAuthListener;
-    private DatabaseReference firebaseRef;
     public String user_id;
-    public User user;
 
     private ProgressDialog mProgressDialog;
 
@@ -74,17 +74,12 @@ public class AuthActivity extends AppCompatActivity {
     public void signOut() {
         mAuth.signOut();
         user_id = null;
-        user = null;
-        saveUser(user);
+        saveUser();
     }
 
     public void signIn(final String email, final String password) {
         showProgressDialog();
 
-        doLogin(user, false);
-
-
-        /*
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -93,37 +88,14 @@ public class AuthActivity extends AppCompatActivity {
                             hideProgressDialog();
                             Toast.makeText(AuthActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                         } else {
-                            user_id = task.getResult().getUser().getUid();
-
-                            firebaseRef = FirebaseDatabase.getInstance().getReference().child("user").child(user_id);
-
-
-                            firebaseRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Log.d("Result", dataSnapshot.getValue().toString());
-
-                                    user = dataSnapshot.getValue(User.class);
-                                    user_id = dataSnapshot.getKey();
-                                    saveUser(user);
-
-                                    hideProgressDialog();
-                                    doLogin(user, false);
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
+                            user_id = task.getResult().getUser().getEmail();
+                            doLogin(false);
                         }
                     }
                 });
-                */
     }
 
-    public void doLogin(final User user, boolean auto) {
+    public void doLogin(boolean auto) {
 
         Intent intent;
 
@@ -151,17 +123,11 @@ public class AuthActivity extends AppCompatActivity {
         finish();
     }
 
-    private void saveUser(User user) {
-        this.user = user;
-        /*Gson gson = new Gson();
-        String json = gson.toJson(user);
-
+    private void saveUser() {
         SharedPreferences.Editor editor = getSharedPreferences(PREF_TAG, MODE_PRIVATE).edit();
         editor.putString("user_id", user_id);
-        editor.putString("user", json);
 
         editor.commit();
-        */
     }
 
     public boolean getUser() {
@@ -169,18 +135,8 @@ public class AuthActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(PREF_TAG, MODE_PRIVATE);
         user_id = prefs.getString("user_id", null);
 
-        /*
-        Gson gson = new Gson();
-        String json = prefs.getString("user", null);
-        Type type = new TypeToken<User>() {
-        }.getType();
-        user = gson.fromJson(json, type);
-        */
+        return user_id != null;
 
-        if (user_id != null && user != null)
-            return true;
-
-        return false;
     }
 
 
@@ -210,16 +166,4 @@ public class AuthActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(hasBackButton);
         }
     }
-
-    /*
-    protected void enterFromBottomAnimation(){
-        overridePendingTransition(R.transition.activity_open_translate_from_bottom, R.transition.activity_no_animation);
-    }
-
-    protected void exitToBottomAnimation(){
-        overridePendingTransition(R.transition.activity_no_animation, R.transition.activity_close_translate_to_bottom);
-    }
-    */
-
-
 }

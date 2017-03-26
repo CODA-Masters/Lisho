@@ -37,7 +37,7 @@ public class LoginActivity extends AuthActivity {
         activity = this;
 
         if(getUser()){
-            doLogin(user, true);
+            doLogin(true);
         }
 
         initView();

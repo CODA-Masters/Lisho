@@ -40,10 +40,8 @@ public class SplashActivity extends AppCompatActivity {
 
         userId="test";
 
-        if(userId.equals(""))
-            return false;
+        return !userId.equals("");
 
-        return true;
     }
 
 

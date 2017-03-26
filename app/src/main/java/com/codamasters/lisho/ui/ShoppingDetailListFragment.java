@@ -97,9 +97,9 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
         if(listType == ShoppingList.GROUP_LIST) {
             mGoals = new ArrayList<>();
             mKeys = new ArrayList<>();
+            loadUser();
             initBat();
             initFirebase();
-            userId = "test";
         }else {
             initWithPrefs();
             initBat();
@@ -196,7 +196,11 @@ public class ShoppingDetailListFragment extends Fragment implements BatListener,
             mGoals = new ArrayList<>();
         }
         userId = sharedPreferences.getString("user_id", "");
-        userId = "test";
+    }
+
+    private void loadUser(){
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(PREF_TAG, getActivity().MODE_PRIVATE);
+        userId = sharedPreferences.getString("user_id", "");
     }
 
     private void savePrefs(){

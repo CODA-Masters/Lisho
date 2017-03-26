@@ -249,7 +249,7 @@ public class ShoppingListHolder extends RecyclerView.ViewHolder implements View.
     public void removeFromOwnUser(ShoppingList shoppingList, String key){
 
         // Eliminamos la referencia al usuario
-        SharedPreferences prefs = context.getSharedPreferences(PREF_TAG, context.MODE_PRIVATE);
+        SharedPreferences prefs = context.getSharedPreferences(PREF_TAG, Context.MODE_PRIVATE);
         String userId = prefs.getString("user_id", null);
         userId = "juan@gmail_com";
 

@@ -22,15 +22,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.codamasters.lisho.R;
-import com.codamasters.lisho.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AuthActivity {
-
 
     private ProgressDialog mProgressDialog;
     private EditText mNameField, mEmailField, mPasswordField, mRepeatPasswordField;
@@ -38,22 +34,16 @@ public class RegisterActivity extends AuthActivity {
     private FloatingActionButton fab;
     private CardView cvAdd;
 
-    private DatabaseReference databaseReference;
-
-    private final String USER_CHILD = "user";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         setUpToolbarWithTitle("Register", true);
 
-
         initView();
         initListeners();
 
     }
-
 
     private void initView(){
 
@@ -93,7 +83,6 @@ public class RegisterActivity extends AuthActivity {
         if (!validateForm()) {
             return;
         }
-
         showProgressDialog();
 
         mAuth.createUserWithEmailAndPassword(email, password)
@@ -105,17 +94,10 @@ public class RegisterActivity extends AuthActivity {
                             Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             hideProgressDialog();
                         }else{
-
-                            String userId = task.getResult().getUser().getUid();
-                            User user = new User(name);
-
-                            databaseReference = FirebaseDatabase.getInstance().getReference().child(USER_CHILD).child(userId);
-                            databaseReference.setValue(user);
-
                             // Iniciamos sesión
                             hideProgressDialog();
                             animateRevealClose();
-                            Toast.makeText(getApplicationContext(), "Usuario registrado", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Usuario registrado. Hemos enviado un correo a su dirección, por favor active la cuenta.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
